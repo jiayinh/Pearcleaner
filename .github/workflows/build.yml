@@ -12,14 +12,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select newest Xcode (needs macOS 26 SDK)
+      - name: Select Xcode 26 (pinned to a stable version)
         run: |
           echo "Available Xcode versions:"
           ls /Applications | grep -i Xcode || true
-          # Pick the highest-numbered Xcode_26* if present, else newest available
-          XCODE_APP=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -n 1)
-          if [ -z "$XCODE_APP" ]; then
-            XCODE_APP=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n 1)
+          # Prefer a known-good Xcode 26.0, fall back to lowest 26.x, then any 26.x
+          if [ -d /Applications/Xcode_26.0.app ]; then
+            XCODE_APP=/Applications/Xcode_26.0.app
+          else
+            XCODE_APP=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | head -n 1)
           fi
           if [ -z "$XCODE_APP" ]; then
             XCODE_APP=/Applications/Xcode.app
