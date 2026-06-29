@@ -59,7 +59,7 @@ jobs:
 
           if [ "$status" -ne 0 ]; then
             echo "::group::Build failure summary"
-            grep -nE "error:|fatal error|Command SwiftCompile failed|SwiftCompile|CompileSwiftSources|EmitSwiftModule" xcodebuild.log | tail -200 || true
+            grep -nE "error:|fatal error|Command SwiftCompile failed" xcodebuild.log | tail -200 || true
             echo "::endgroup::"
             exit "$status"
           fi
