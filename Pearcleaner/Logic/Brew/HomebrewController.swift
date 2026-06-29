@@ -43,10 +43,6 @@ enum HomebrewError: Error, LocalizedError {
 // MARK: - OS Version Helpers
 
 private func getCurrentOSCodename() -> String {
-    // TEMPORARY: Fake Sequoia for testing
-//    return "sequoia"
-
-    //MARK: THIS WILL NEED TO BE UDPATED WITH EACH NEW OS RELEASE
     let version = ProcessInfo.processInfo.operatingSystemVersion
     switch version.majorVersion {
     case 13: return "ventura"
