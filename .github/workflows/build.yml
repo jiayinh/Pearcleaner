@@ -12,12 +12,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode.app
+      - name: Select newest Xcode (needs macOS 26 SDK)
+        run: |
+          echo "Available Xcode versions:"
+          ls /Applications | grep -i Xcode || true
+          # Pick the highest-numbered Xcode_26* if present, else newest available
+          XCODE_APP=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -z "$XCODE_APP" ]; then
+            XCODE_APP=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n 1)
+          fi
+          if [ -z "$XCODE_APP" ]; then
+            XCODE_APP=/Applications/Xcode.app
+          fi
+          echo "Selecting $XCODE_APP"
+          sudo xcode-select -switch "$XCODE_APP/Contents/Developer"
 
       - name: Show versions
         run: |
           xcodebuild -version
+          xcodebuild -showsdks | grep -i macos || true
           swift --version
 
       - name: List schemes
