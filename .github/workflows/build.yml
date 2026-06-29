@@ -1,0 +1,53 @@
+name: Build Pearcleaner
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Show versions
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: List schemes
+        run: xcodebuild -list -project Pearcleaner.xcodeproj
+
+      - name: Build (unsigned)
+        run: |
+          xcodebuild clean build \
+            -project Pearcleaner.xcodeproj \
+            -scheme Pearcleaner \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            ENABLE_HARDENED_RUNTIME=NO \
+            -skipPackagePluginValidation \
+            -skipMacroValidation
+
+      - name: Zip app
+        run: |
+          APP_PATH=$(find build/Build/Products/Release -maxdepth 1 -name "*.app" | head -n 1)
+          echo "Found app at: $APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" Pearcleaner.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pearcleaner-app
+          path: Pearcleaner.zip
+          if-no-files-found: error
