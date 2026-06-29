@@ -1,4 +1,4 @@
-name: Build Pearcleaner
+name: Build PearBrew
 
 on:
   workflow_dispatch:
@@ -58,11 +58,11 @@ jobs:
         run: |
           APP_PATH=$(find build/Build/Products/Release -maxdepth 1 -name "*.app" | head -n 1)
           echo "Found app at: $APP_PATH"
-          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" Pearcleaner.zip
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" PearBrew.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Pearcleaner-app
-          path: Pearcleaner.zip
+          name: PearBrew-app
+          path: PearBrew.zip
           if-no-files-found: error

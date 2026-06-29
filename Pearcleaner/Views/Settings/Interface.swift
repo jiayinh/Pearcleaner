@@ -26,7 +26,7 @@ struct InterfaceSettingsTab: View {
     @AppStorage("settings.interface.multiSelect") private var multiSelect: Bool = false
     @AppStorage("settings.interface.greetingEnabled") private var greetingEnabled: Bool = true
     @AppStorage("settings.interface.badgeOverlaysEnabled") private var badgeOverlaysEnabled: Bool = true
-    @AppStorage("settings.interface.startupView") private var startupView: Int = CurrentPage.applications.rawValue
+    @AppStorage("settings.interface.startupView") private var startupView: Int = CurrentPage.homebrew.rawValue
     @State private var showPagePopover: Bool = false
     @State private var hiddenPages: Set<Int> = AppState.loadHiddenPages()
 
@@ -262,10 +262,10 @@ struct PageVisibilityPopover: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ForEach(CurrentPage.allCases, id: \.rawValue) { page in
+            ForEach(CurrentPage.availablePages, id: \.rawValue) { page in
                 let isHidden = hiddenPages.contains(page.rawValue)
                 let isStartupPage = startupView == page.rawValue
-                let visiblePageCount = CurrentPage.allCases.count - hiddenPages.count
+                let visiblePageCount = CurrentPage.availablePages.count - hiddenPages.count
 
                 HStack(spacing: 12) {
                     // Radio button and label - clickable together
@@ -319,4 +319,3 @@ struct PageVisibilityPopover: View {
         .padding(.vertical, 8)
     }
 }
-

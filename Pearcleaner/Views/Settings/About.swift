@@ -1,24 +1,17 @@
 //
 //  About.swift
-//  Pearcleaner
-//
-//  Created by Alin Lupascu on 11/5/23.
+//  PearBrew
 //
 
 import SwiftUI
 import AlinFoundation
 
 struct AboutSettingsTab: View {
-    @EnvironmentObject var appState: AppState
     @Environment(\.colorScheme) var colorScheme
-    @State private var disclose = false
-    @State private var discloseCredits = false
     @State private var isResetting = false
 
     var body: some View {
-
-        VStack(alignment: .center) {
-
+        VStack(alignment: .center, spacing: 24) {
             VStack(spacing: 10) {
                 Image(nsImage: NSApp.applicationIconImage)
                 Text(Bundle.main.name)
@@ -29,96 +22,62 @@ struct AboutSettingsTab: View {
                     Text("Version \(Bundle.main.version)")
                     Text("(Build \(Bundle.main.buildVersion))")
                         .font(.footnote)
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
                 }
                 .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
 
-                Text("Made with ❤️ by Alin Lupascu").foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText).font(.footnote)
-
+                Text("Unofficial non-commercial fork based on Pearcleaner")
+                    .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
+                    .font(.footnote)
             }
-            .padding(.vertical, 50)
+            .padding(.vertical, 40)
 
+            PearGroupBox(header: {
+                Text("Project")
+                    .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
+                    .font(.title)
+            }, content: {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("PearBrew keeps Pearcleaner's Homebrew and app-updater workflows, while removing the app-cleaner and privileged-helper features from the user-facing app.")
+                        .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
 
-            VStack(spacing: 20) {
-                // GitHub
-                PearGroupBox(header: { Text("Support").foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText).font(.title) }, content: {
-                    HStack{
-                        Image(systemName: "ant")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
-                            .frame(width: 20, height: 20)
-                            .padding(.trailing)
+                    Text("This fork is not affiliated with, endorsed by, or maintained by the original Pearcleaner author.")
+                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
 
-                        VStack(alignment: .leading){
-                            Text("Submit a bug or feature request")
-                                .font(.title3)
-                                .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
-
-                        }
-                        Spacer()
+                    HStack {
                         Button {
-                            NSWorkspace.shared.open(URL(string: "https://github.com/alienator88/Pearcleaner/issues/new/choose")!)
+                            NSWorkspace.shared.open(URL(string: "https://github.com/jiayinh/Pearcleaner")!)
                         } label: {
-                            Text("View")
-                        }
-                        .controlSize(.small)
-                        .buttonStyle(.plain)
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).accent)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 14)
-                        .controlGroup(Capsule(style: .continuous), level: .primary)
-                    }
-
-                })
-
-                // Translators
-                PearGroupBox(header: { Text("Translation").foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText).font(.title) }, content: {
-                    HStack{
-                        Image(systemName: "globe")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
-                            .frame(width: 20, height: 20)
-                            .padding(.trailing)
-
-                        VStack(alignment: .leading, spacing: 10){
-                            Text("A **huge** thank you to everyone who has contributed so far!")
-                                .font(.title3)
-                                .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
-                            Text(translators)
-                                .font(.callout)
-                                .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-
+                            Label("Repository", systemImage: "link")
                         }
 
-                        Spacer()
                         Button {
-                            NSWorkspace.shared.open(URL(string: "https://github.com/alienator88/Pearcleaner/discussions/137")!)
+                            NSWorkspace.shared.open(URL(string: "https://github.com/alienator88/Pearcleaner")!)
                         } label: {
-                            Text("View")
+                            Label("Upstream", systemImage: "arrow.up.right")
                         }
-                        .controlSize(.small)
-                        .buttonStyle(.plain)
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).accent)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 14)
-                        .controlGroup(Capsule(style: .continuous), level: .primary)
-
                     }
+                    .buttonStyle(.bordered)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            })
 
-                })
+            PearGroupBox(header: {
+                Text("License")
+                    .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
+                    .font(.title)
+            }, content: {
+                Text("PearBrew is distributed under Pearcleaner's Apache 2.0 with Commons Clause terms. This fork is for free personal/community use and must not be sold or monetized.")
+                    .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            })
 
-                SettingsControlButtonGroup(isResetting: $isResetting, resetAction: {
-                    resetUserDefaults()
-                }, exportAction: {
-                    exportUserDefaults()
-                }, importAction: {
-                    importUserDefaults()
-                })
-
-            }
-
+            SettingsControlButtonGroup(isResetting: $isResetting, resetAction: {
+                resetUserDefaults()
+            }, exportAction: {
+                exportUserDefaults()
+            }, importAction: {
+                importUserDefaults()
+            })
         }
     }
 
@@ -144,7 +103,7 @@ struct AboutSettingsTab: View {
         let savePanel = NSSavePanel()
         savePanel.directoryURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
         savePanel.allowedContentTypes = [.json]
-        savePanel.nameFieldStringValue = "PearcleanerSettings.json"
+        savePanel.nameFieldStringValue = "PearBrewSettings.json"
         savePanel.begin { response in
             guard response == .OK, let url = savePanel.url else { return }
             try? jsonData.write(to: url)
@@ -166,6 +125,3 @@ struct AboutSettingsTab: View {
         }
     }
 }
-
-
-let translators = "changanmoon, L1cardo, funsiyuan, megabitsenmzq, iFloneUEFN, matxpa, vogt65, AgiMaulana, kiwamizamurai, readingsnail, rokartur, MARCELOisME, exituser, Skro11-ru, Svec-Tomas, DrRoglaa, realkeremcam, Ihor-Khomenko, HungThinhIT"

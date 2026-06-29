@@ -21,7 +21,7 @@ struct AppsUpdaterView: View {
     @AppStorage("settings.interface.animationEnabled") private var animationEnabled: Bool = true
     @AppStorage("settings.updater.sources") private var sourcesData: Data = UpdaterSourcesSettings.defaultEncoded()
     @AppStorage("settings.updater.display") private var displayData: Data = UpdaterDisplaySettings.defaultEncoded()
-    @AppStorage("settings.interface.startupView") private var startupView: Int = CurrentPage.applications.rawValue
+    @AppStorage("settings.interface.startupView") private var startupView: Int = CurrentPage.homebrew.rawValue
 
     // Computed properties for convenient access
     private var sources: UpdaterSourcesSettings {
@@ -291,4 +291,3 @@ struct AppsUpdaterView: View {
         }
     }
 }
-

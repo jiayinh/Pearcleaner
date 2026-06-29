@@ -1,40 +1,50 @@
 # Modifications Notice
 
-This repository is a personal fork of [alienator88/Pearcleaner](https://github.com/alienator88/Pearcleaner),
-maintained for personal/community use only.
+This repository is an unofficial, non-commercial fork of
+[alienator88/Pearcleaner](https://github.com/alienator88/Pearcleaner).
 
 ## License
 
 Pearcleaner is licensed under the **Apache License 2.0 with the Commons Clause**.
 This fork is distributed under the same license. In accordance with the license:
 
-- The original LICENSE and copyright notices are retained (see LICENSE.md).
-- This file documents modifications made to the original work, as required by
-  Section 4(b) of the Apache License 2.0.
-- **Commons Clause restriction:** This software, including any modified versions,
-  may NOT be sold or otherwise commercialized. This fork is provided free of charge
-  and is not monetized in any way.
+- the original LICENSE and copyright notices are retained in `LICENSE.md`
+- this file documents modifications made to the original work
+- the Commons Clause restriction remains in effect: this software, including
+  modified versions, may not be sold or otherwise commercialized
 
-This is an **unofficial build**. The only official source of Pearcleaner is
-https://itsalin.com and the upstream repository. This fork is not affiliated with
-or endorsed by the original author.
+This fork is provided free of charge for personal/community use only.
 
-## Modifications made in this fork
+## Unofficial Fork Notice
 
-1. Replaced the hard-coded absolute module-map path
-   `/Users/alin/GitHub/PearcleanerGH` with the portable `$(SRCROOT)` build
-   variable in `Pearcleaner.xcodeproj/project.pbxproj`, so the project can be
-   built on any machine / CI environment.
+PearBrew is not affiliated with, endorsed by, sponsored by, or maintained by the
+original Pearcleaner author. The name PearBrew is used to distinguish this fork
+from Pearcleaner.
 
-2. Added a GitHub Actions workflow (`.github/workflows/build.yml`) that builds
-   the app unsigned on a `macos-latest` runner and uploads it as an artifact.
+## Modifications Made In This Fork
 
-3. (Where applicable) incorporated selected community bug-fix pull requests from
-   the upstream repository. See the commit history for details and attribution.
+1. Renamed the user-facing app from Pearcleaner to PearBrew.
 
-## Note on the unsigned build
+2. Refocused the app on Homebrew management and app update workflows.
 
-Builds produced by the CI workflow are **not code-signed or notarized**. macOS
-Gatekeeper will warn that the app is from an unidentified developer. Some features
-that rely on the privileged helper or hardened runtime may behave differently than
-the official signed release.
+3. Removed the app-cleaner features from the user-facing interface, including:
+   app uninstall, orphaned file search, file search, app lipo, package manager,
+   plugin manager, services manager, development environment cleanup, delete
+   history, drag/drop uninstall, Finder-service entry points, and helper prompts.
+
+4. Removed privileged-helper and background-cleaner behavior from app startup and
+   from the final app bundle copy phases. The related source may remain in the
+   repository for traceability, but it is not part of PearBrew's intended user
+   experience.
+
+5. Kept the GitHub Actions build unsigned for personal-use builds. Unsigned builds
+   are not notarized and may trigger normal macOS Gatekeeper warnings.
+
+6. Replaced the original Pearcleaner README text with PearBrew-specific
+   documentation and attribution.
+
+## Important Limitations
+
+PearBrew is not a full app cleaner and does not include Pearcleaner's privileged
+helper flow. System-level deletion and privileged cleaning workflows are outside
+the scope of this fork.

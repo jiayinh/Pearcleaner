@@ -19,7 +19,6 @@ struct MainWindow: View {
     @EnvironmentObject var locations: Locations
     @EnvironmentObject var fsm: FolderSettingsManager
     @EnvironmentObject var updater: Updater
-    @EnvironmentObject var permissionManager: PermissionManagerLocal
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("settings.general.glass") private var glass: Bool = false
     @AppStorage("settings.general.sidebarWidth") private var sidebarWidth: Double = 265
@@ -37,7 +36,6 @@ struct MainWindow: View {
     // Badges
     @State private var showUpdateView = false
     @State private var showFeatureView = false
-    @State private var showPermissionList = false
     @State private var glowRadius = 0.0
 
     var body: some View {
@@ -49,46 +47,6 @@ struct MainWindow: View {
 
                 Group {
                     switch appState.currentPage {
-                    case .applications:
-                        withConsole {
-                            applicationsView
-                        }
-
-                    case .orphans:
-                        withConsole {
-                            ZombieView()
-                        }
-
-                    case .development:
-                        withConsole {
-                            EnvironmentCleanerView()
-                        }
-
-                    case .lipo:
-                        withConsole {
-                            LipoView()
-                        }
-
-                    case .services:
-                        withConsole {
-                            DaemonView()
-                        }
-
-                    case .packages:
-                        withConsole {
-                            PackageView()
-                        }
-
-                    case .plugins:
-                        withConsole {
-                            PluginsView()
-                        }
-
-                    case .fileSearch:
-                        withConsole {
-                            FileSearchView()
-                        }
-
                     case .homebrew:
                         HomebrewView()
                             .environmentObject(brewManager)
@@ -99,6 +57,9 @@ struct MainWindow: View {
                                 .environmentObject(brewManager)
                                 .environmentObject(updateManager)
                         }
+                    default:
+                        HomebrewView()
+                            .environmentObject(brewManager)
                     }
                 }
 
@@ -123,22 +84,10 @@ struct MainWindow: View {
                 .transition(.opacity)
             }
 
-            // Badge overlay (unified overlay for all badge notifications)
-            BadgeOverlay()
-                .environmentObject(updater)
-                .zIndex(100)
-
         }
         .background(backgroundView(color: ThemeColors.shared(for: colorScheme).primaryBG))
         .frame(minWidth: 900, minHeight: 650)
         .handlesExternalEvents(preferring: Set(arrayLiteral: "pear"), allowing: Set(arrayLiteral: "*"))
-        .handleFileDrop(
-            updater: updater,
-            fsm: fsm,
-            appState: appState,
-            locations: locations,
-            isTargeted: $isDraggingOver
-        )
         .onOpenURL(perform: { url in
             let deeplinkManager = DeeplinkManager(updater: updater, fsm: fsm)
             deeplinkManager.manage(url: url, appState: appState, locations: locations)
@@ -146,12 +95,6 @@ struct MainWindow: View {
         .sheet(isPresented: $updater.sheet, content: {
             /// This will show the update sheet based on the frequency check function only
             updater.getUpdateView()
-        })
-        .sheet(isPresented: $appState.showDeleteHistory, content: {
-            DeleteHistoryView()
-                .environmentObject(appState)
-                .environmentObject(locations)
-                .environmentObject(fsm)
         })
         .onReceive(
             NotificationCenter.default.publisher(for: NSWindow.didEnterFullScreenNotification)
@@ -294,25 +237,6 @@ struct MainWindow: View {
                     }
                     .sheet(isPresented: $showFeatureView) {
                         updater.getAnnouncementView()
-                    }
-                } else if permissionManager.shouldShowPermissionWarning {
-                    noticeButton(
-                        image: "lock.slash.fill",
-                        color: .red,
-                        help: "Permissions Missing"
-                    ) {
-                        showPermissionList.toggle()
-                    }
-                    .sheet(isPresented: $showPermissionList) {
-                        PermissionsSheetView()
-                    }
-                } else if HelperToolManager.shared.shouldShowHelperBadge {
-                    noticeButton(
-                        image: "gear",
-                        color: .orange,
-                        help: "Helper Not Installed"
-                    ) {
-                        openAppSettingsWindow(tab: .helper, updater: updater)
                     }
                 }
 
@@ -917,4 +841,3 @@ struct VolumeItemView: View {
     }
 
 }
-

@@ -86,12 +86,13 @@ class AppState: ObservableObject {
         // Load hidden pages
         let hiddenPages = AppState.loadHiddenPages()
 
-        // Validate: If startup page is hidden, default to .applications
+        // Validate: If startup page is hidden or no longer part of the slimmed UI, default to Homebrew.
         if hiddenPages.contains(storedStartupView) {
-            self.currentPage = .applications
-            UserDefaults.standard.set(CurrentPage.applications.rawValue, forKey: "settings.interface.startupView")
+            self.currentPage = .homebrew
+            UserDefaults.standard.set(CurrentPage.homebrew.rawValue, forKey: "settings.interface.startupView")
         } else {
-            self.currentPage = CurrentPage(rawValue: storedStartupView) ?? .applications
+            let storedPage = CurrentPage(rawValue: storedStartupView) ?? .homebrew
+            self.currentPage = CurrentPage.availablePages.contains(storedPage) ? storedPage : .homebrew
         }
 
         self.appInfo = AppInfo(
@@ -698,11 +699,12 @@ enum CurrentPage: Int, CaseIterable, Identifiable {
     /// Returns all pages filtered based on build configuration and user visibility settings
     static var availablePages: [CurrentPage] {
         let hiddenPages = AppState.loadHiddenPages()
+        let slimPages: [CurrentPage] = [.homebrew, .updater]
 
         #if DEBUG
-        return CurrentPage.allCases.filter { !hiddenPages.contains($0.rawValue) }
+        return slimPages.filter { !hiddenPages.contains($0.rawValue) }
         #else
-        return CurrentPage.allCases
+        return slimPages
             .filter { !debugOnlyPages.contains($0) }
             .filter { !hiddenPages.contains($0.rawValue) }
         #endif
@@ -791,6 +793,10 @@ enum CurrentTabView: Int, CaseIterable {
     case update
     case helper
     case about
+
+    static var availableTabs: [CurrentTabView] {
+        [.general, .interface, .update, .about]
+    }
 
     var title: String {
         switch self {

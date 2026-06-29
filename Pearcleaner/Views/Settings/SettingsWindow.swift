@@ -16,9 +16,7 @@ struct SettingsView: View {
     @AppStorage("settings.general.glass") private var glass: Bool = false
     @AppStorage("settings.general.selectedTab") private var selectedTab: CurrentTabView = .general
     @AppStorage("settings.interface.scrollIndicators") private var scrollIndicators: Bool = false
-    @State private var showPerms = false
     @State private var toolbarRefreshTrigger = false
-    @ObservedObject private var helperToolManager = HelperToolManager.shared
 
     var body: some View {
 
@@ -32,6 +30,10 @@ struct SettingsView: View {
         .background(backgroundView(color: ThemeColors.shared(for: colorScheme).primaryBG))
         .toolbarBackground(.hidden, for: .windowToolbar)
         .onAppear {
+            if !CurrentTabView.availableTabs.contains(selectedTab) {
+                selectedTab = .general
+            }
+
             // Force toolbar refresh by toggling state
             DispatchQueue.main.async {
                 toolbarRefreshTrigger.toggle()
@@ -44,81 +46,6 @@ struct SettingsView: View {
             ToolbarItemGroup {
                 Group {
                     switch selectedTab {
-                    case .helper:
-                        // Helper tab toolbar items
-                        Button {
-                            helperToolManager.openSMSettings()
-                        } label: {
-                            Label("Login Items", systemImage: "gear")
-                                .labelStyle(.iconOnly)
-                                .help("Login Items")
-                        }
-
-                        Button {
-                            Task {
-                                await helperToolManager.manageHelperTool(action: .uninstall)
-                            }
-                        } label: {
-                            Label("Unregister Service", systemImage: "trash")
-                                .labelStyle(.iconOnly)
-                                .help("Unregister Service")
-                        }
-
-                        Button {
-                            showCustomAlert(title: "Reset BTM", message: "This resets the whole Background Task Management database and will clear your 'Open at Login' and 'App Background Activity' list.", style: .warning, onOk: {
-                                Task {
-                                    let _ = await helperToolManager.nuclearResetHelper()
-                                }
-                            })
-
-                        } label: {
-                            Label("Nuclear Reset", systemImage: "exclamationmark.triangle")
-                                .labelStyle(.iconOnly)
-                                .help("Reset Background Task Management database")
-                        }
-//                        Button {
-//                            Task {
-//                                await helperToolManager.manageHelperTool(action: .reinstall)
-//                            }
-//                        } label: {
-//                            Label("Reinstall Service", systemImage: "arrow.clockwise")
-//                                .labelStyle(.iconOnly)
-//                                .help("Force Reinstall Service (fixes desync)")
-//                        }
-
-//                        #if DEBUG
-//                        Button {
-//                            Task {
-//                                let _ = await helperToolManager.nuclearResetHelper()
-//                            }
-//                        } label: {
-//                            Label("Nuclear Reset", systemImage: "exclamationmark.triangle")
-//                                .labelStyle(.iconOnly)
-//                                .help("Nuclear Reset (last resort - clears ALL helper instances)")
-//                        }
-//                        .foregroundStyle(.red)
-//                        #endif
-
-                    case .about:
-                        // About tab toolbar item
-                        Button(action: {
-                            NSWorkspace.shared.open(URL(string: "https://github.com/sponsors/alienator88")!)
-                        }, label: {
-                            Label {
-                                Text("Sponsor")
-                                    .foregroundStyle(ThemeColors.shared(for: colorScheme).primaryText)
-                                    .font(.body)
-                                    .bold()
-                            } icon: {
-                                Image(systemName: "heart")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 16, height: 16)
-                                    .foregroundStyle(.pink)
-                            }
-                            .labelStyle(.titleAndIcon)
-                        })
-
                     default:
                         // No toolbar items for other tabs
                         EmptyView()
@@ -144,14 +71,8 @@ struct SettingsView: View {
                 SidebarItemView(title: CurrentTabView.interface.title, systemImage: "macwindow", isSelected: selectedTab == .interface) {
                     selectedTab = .interface
                 }
-                SidebarItemView(title: CurrentTabView.folders.title, systemImage: "folder", isSelected: selectedTab == .folders) {
-                    selectedTab = .folders
-                }
                 SidebarItemView(title: CurrentTabView.update.title, systemImage: "cloud", isSelected: selectedTab == .update) {
                     selectedTab = .update
-                }
-                SidebarItemView(title: CurrentTabView.helper.title, systemImage: "key", isSelected: selectedTab == .helper) {
-                    selectedTab = .helper
                 }
                 SidebarItemView(title: CurrentTabView.about.title, systemImage: "info.circle", isSelected: selectedTab == .about) {
                     selectedTab = .about
@@ -174,16 +95,6 @@ struct SettingsView: View {
 
                 Divider().frame(height: 10)
 
-                Button() {
-                    showPerms.toggle()
-                } label: {
-                    Text(String(localized: "Permissions").uppercased())
-                        .font(.footnote)
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-                }
-                .sheet(isPresented: $showPerms, content: {
-                    PermissionsSheetView()
-                })
             }
             .controlSize(.small)
             .buttonStyle(.plain)
@@ -211,12 +122,12 @@ struct SettingsView: View {
             case .interface:
                 InterfaceSettingsTab()
             case .folders:
-                FolderSettingsTab()
+                GeneralSettingsTab()
             case .update:
                 UpdateSettingsTab()
                     .environmentObject(updater)
             case .helper:
-                HelperSettingsTab()
+                GeneralSettingsTab()
             case .about:
                 AboutSettingsTab()
             }
@@ -247,14 +158,6 @@ struct SidebarItemView: View {
             Text(title)
                 .font(.system(size: 14, weight: .regular))
                 .foregroundStyle(isSelected ? ThemeColors.shared(for: colorScheme).primaryText : ThemeColors.shared(for: colorScheme).secondaryText)
-            if !HelperToolManager.shared.isHelperToolInstalled && title.lowercased().contains("helper") {
-                Image(systemName: "exclamationmark.triangle")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundStyle(.orange)
-                    .frame(width: 14, height: 14)
-                    .help("Please install the helper service")
-            }
             Spacer()
         }
         .padding(.vertical, 8)

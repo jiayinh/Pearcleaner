@@ -1,6 +1,6 @@
 //
 //  PearcleanerApp.swift
-//  Pearcleaner
+//  PearBrew
 //
 //  Created by Alin Lupascu on 10/31/23.
 //
@@ -14,12 +14,10 @@ struct PearcleanerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     //MARK: ObservedObjects
     @ObservedObject var appState = AppState.shared
-    @ObservedObject private var permissionManager = PermissionManagerLocal.shared
-    @ObservedObject private var helperToolManager = HelperToolManager.shared
     //MARK: StateObjects
     @StateObject var locations = Locations()
     @StateObject var fsm = FolderSettingsManager.shared
-    @StateObject private var updater = Updater(owner: "alienator88", repo: "Pearcleaner")
+    @StateObject private var updater = Updater(owner: "jiayinh", repo: "Pearcleaner")
 
     init() {
         //MARK: GUI or CLI launch mode.
@@ -28,12 +26,7 @@ struct PearcleanerApp: App {
         //MARK: Initialize password request handler for SUDO_ASKPASS IPC
         _ = PasswordRequestHandler.shared
 
-        //MARK: Pre-load apps data during app initialization (use streaming for fast initial load)
-        let folderPaths = FolderSettingsManager.shared.folderPaths
-        loadApps(folderPaths: folderPaths, useStreaming: true)
-
-        //MARK: Pre-load volume information
-        AppState.shared.loadVolumeInfo()
+        // The slim build is focused on Homebrew and app updates. The updater loads app data on demand.
 
     }
 
@@ -45,7 +38,6 @@ struct PearcleanerApp: App {
                 .environmentObject(locations)
                 .environmentObject(fsm)
                 .environmentObject(updater)
-                .environmentObject(permissionManager)
 
         }
         .windowStyle(.hiddenTitleBar)
@@ -69,19 +61,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSWindow.allowsAutomaticWindowTabbing = false
 
-        // Register as services provider (required for NSServices to work)
-        NSApp.servicesProvider = self
-
-        // Check permissions once at launch
-        PermissionManagerLocal.shared.checkPermissions(types: [.fullDiskAccess]) { results in
-            PermissionManagerLocal.shared.results = results
-        }
-
-        // Load and cleanup undo history
-        Task { @MainActor in
-            UndoHistoryManager.shared.cleanupStaleEntries()
-        }
-
         ensureApplicationSupportFolderExists()
 
         cleanupPearcleanerTempDirs()
@@ -92,32 +71,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func applicationShouldRestoreApplicationState(_ app: NSApplication) -> Bool {
         return false
-    }
-
-    // MARK: - Service Handler
-    @objc func handleServiceRequest(_ pasteboard: NSPasteboard, userData: NSString, error: AutoreleasingUnsafeMutablePointer<NSString>) {
-        // Get file URLs from pasteboard
-        guard let fileURLs = pasteboard.readObjects(forClasses: [NSURL.self], options: [
-            .urlReadingFileURLsOnly: true
-        ]) as? [URL], !fileURLs.isEmpty else {
-            printOS("Service: No valid file URLs found in pasteboard")
-            return
-        }
-
-        // Process all selected .app files
-        let appURLs = fileURLs.filter { $0.pathExtension == "app" }
-
-        guard !appURLs.isEmpty else {
-            printOS("Service: No .app bundles found in selection")
-            return
-        }
-
-        // Open deep link for each app - DeeplinkManager will queue and process them sequentially
-        for appURL in appURLs {
-            if let deepLinkURL = URL(string: "pear://com.alienator88.Pearcleaner?path=\(appURL.path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? appURL.path)") {
-                NSWorkspace.shared.open(deepLinkURL)
-            }
-        }
     }
 
 }
