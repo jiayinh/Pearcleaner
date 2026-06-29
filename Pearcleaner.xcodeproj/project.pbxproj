@@ -274,8 +274,6 @@
 			files = (
 				C707E2942EAF217200AAD817 /* Sparkle in Frameworks */,
 				C76EDCD62C45DC82000CF29D /* AlinFoundation in Frameworks */,
-				C7A2A4D92DDB95C4006E05E4 /* ArgumentParser in Frameworks */,
-				C783F93A2E9039EB003450E7 /* PackageKit.framework in Frameworks */,
 				C7736E4F2C49A44200917293 /* AlinFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,27 +295,19 @@
 				C7DD49E92BAB4D8100CCBA16 /* AppInfoFetch.swift */,
 				C78D7B202D556F16003DD49F /* AppPathsFetch.swift */,
 				C77B90152AF19377009CC655 /* AppState.swift */,
-				C7A2A4D52DDB957D006E05E4 /* CLI.swift */,
 				C74FDC622BCD833D00B8960F /* Conditions.swift */,
 				C72893042AFD42E600C8C1CD /* DeepLink.swift */,
 				C77020282EA94D0A00240D58 /* FuzzySearch.swift */,
 				C73AE1912EC69A81009CAC42 /* GlobalConsoleManager.swift */,
-				C73545EA2D8496DA00A3DC0C /* HelperToolManager.swift */,
 				C78FF5E22EC1B1E100FC610A /* KeychainPasswordManager.swift */,
-				C7C90DD22DA81C590056769A /* Lipo.swift */,
 				C7D31D502AFF00F300C7ED9E /* Locations.swift */,
 				C77B90192AF1938F009CC655 /* Logic.swift */,
 				C78FF5E02EC1A3B400FC610A /* PasswordRequestHandler.swift */,
 				C7CC10E32E9473480057B7E2 /* ProcessEnv.swift */,
 				C7DD49ED2BAB7F6000CCBA16 /* ReversePathsFetch.swift */,
-				C75AED0F2EC259C800824CCD /* UndoHistoryManager.swift */,
-				C72FDCB82D6D088A00DE7D56 /* UndoManager.swift */,
 				C7F539372AF60865007DF1B2 /* Utilities.swift */,
 				C7C693E92E9D73DD0081CF25 /* AppsUpdater */,
 				C7923DCC2E90807F005C5632 /* Brew */,
-				C783F8FD2E903707003450E7 /* FileSearch */,
-				C783F9492E903B53003450E7 /* PKG */,
-				C71B87562EF49C58009C5B07 /* TCC */,
 			);
 			path = Logic;
 			sourceTree = "<group>";
@@ -335,7 +325,6 @@
 		C72893162AFD531500C8C1CD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C783F9392E9039EB003450E7 /* PackageKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -358,9 +347,6 @@
 			children = (
 				C75E82DD2E8C58380090C3B1 /* Shared */,
 				C77B90022AF18E2E009CC655 /* Pearcleaner */,
-				C72893102AFD51EA00C8C1CD /* PearcleanerSentinel */,
-				C78121642BC892A000BE06BD /* FinderOpen */,
-				C73545F12D849A1B00A3DC0C /* PearcleanerHelper */,
 				C77B90012AF18E2E009CC655 /* Products */,
 				C72893162AFD531500C8C1CD /* Frameworks */,
 			);
@@ -370,9 +356,6 @@
 			isa = PBXGroup;
 			children = (
 				C77B90002AF18E2E009CC655 /* PearBrew.app */,
-				C728930F2AFD51EA00C8C1CD /* PearcleanerSentinel */,
-				C78121632BC892A000BE06BD /* FinderOpen.appex */,
-				C73545F02D849A1B00A3DC0C /* PearcleanerHelper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -394,21 +377,11 @@
 		C77B901F2AF1B390009CC655 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C74422402E4936700002D277 /* DaemonView.swift */,
-				C75AED0D2EC259A900824CCD /* DeleteHistoryView.swift */,
-				C770D7DA2CE7C9A100B3492A /* DevelopmentView.swift */,
-				C7BB992E2E8B225F007BBB81 /* FileSearchView.swift */,
 				C72D03B22E4D3FB900ADC1B4 /* MainWindow.swift */,
-				C74422422E494D7E0002D277 /* PackageView.swift */,
-				C7BB99282E8AF1CB007BBB81 /* PluginsView.swift */,
 				C7C693FC2E9D74D50081CF25 /* AppsUpdaterView */,
-				C74649EE2E4800BB002D1C63 /* AppsView */,
 				C7C05FD72E8DA12C006D0476 /* Brew */,
 				C71DC3392EAAAFF000503474 /* Components */,
-				C76073F32E3C1C2C003957A7 /* FilesView */,
-				C74649E62E48000C002D1C63 /* LipoView */,
 				C74649FA2E48076B002D1C63 /* Settings */,
-				C74649EA2E48008A002D1C63 /* ZombieView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -485,15 +458,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				C71B87562EF49C58009C5B07 /* TCC */,
 				C71DC3392EAAAFF000503474 /* Components */,
-				C74649E62E48000C002D1C63 /* LipoView */,
-				C74649EA2E48008A002D1C63 /* ZombieView */,
-				C74649EE2E4800BB002D1C63 /* AppsView */,
 				C74649FA2E48076B002D1C63 /* Settings */,
-				C76073F32E3C1C2C003957A7 /* FilesView */,
-				C783F8FD2E903707003450E7 /* FileSearch */,
-				C783F9492E903B53003450E7 /* PKG */,
 				C7923DCC2E90807F005C5632 /* Brew */,
 				C7C05FD72E8DA12C006D0476 /* Brew */,
 				C7C693E92E9D73DD0081CF25 /* AppsUpdater */,
@@ -503,7 +469,6 @@
 			packageProductDependencies = (
 				C76EDCD52C45DC82000CF29D /* AlinFoundation */,
 				C7736E4E2C49A44200917293 /* AlinFoundation */,
-				C7A2A4D82DDB95C4006E05E4 /* ArgumentParser */,
 				C707E2932EAF217200AAD817 /* Sparkle */,
 			);
 			productName = PearBrew;
@@ -581,7 +546,6 @@
 			mainGroup = C77B8FF72AF18E2E009CC655;
 			packageReferences = (
 				C7736E4D2C49A44200917293 /* XCRemoteSwiftPackageReference "AlinFoundation" */,
-				C7A2A4D72DDB95C4006E05E4 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				C707E2922EAF217200AAD817 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			preferredProjectObjectVersion = 56;
@@ -590,9 +554,6 @@
 			projectRoot = "";
 			targets = (
 				C77B8FFF2AF18E2E009CC655 /* Pearcleaner */,
-				C728930E2AFD51EA00C8C1CD /* PearcleanerSentinel */,
-				C78121622BC892A000BE06BD /* FinderOpen */,
-				C73545EF2D849A1B00A3DC0C /* PearcleanerHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -665,27 +626,16 @@
 			files = (
 				C78FF5E12EC1A3B400FC610A /* PasswordRequestHandler.swift in Sources */,
 				C7DD49EA2BAB4D8100CCBA16 /* AppInfoFetch.swift in Sources */,
-				C75AED102EC259C800824CCD /* UndoHistoryManager.swift in Sources */,
 				C7CC10E42E94734E0057B7E2 /* ProcessEnv.swift in Sources */,
-				C74422432E494D830002D277 /* PackageView.swift in Sources */,
 				C77B90162AF19377009CC655 /* AppState.swift in Sources */,
 				C7DD49EE2BAB7F6000CCBA16 /* ReversePathsFetch.swift in Sources */,
 				C72D03B52E4D3FB900ADC1B4 /* MainWindow.swift in Sources */,
 				C77020292EA94D0A00240D58 /* FuzzySearch.swift in Sources */,
-				C7BB99292E8AF1CB007BBB81 /* PluginsView.swift in Sources */,
-				C7C90DD32DA81C5D0056769A /* Lipo.swift in Sources */,
 				C78FF5E32EC1B1E100FC610A /* KeychainPasswordManager.swift in Sources */,
-				C7A2A4D62DDB957D006E05E4 /* CLI.swift in Sources */,
 				C7D31D512AFF00F300C7ED9E /* Locations.swift in Sources */,
 				C77B901A2AF1938F009CC655 /* Logic.swift in Sources */,
 				C78D7B212D556F1A003DD49F /* AppPathsFetch.swift in Sources */,
-				C770D7DB2CE7C9AD00B3492A /* DevelopmentView.swift in Sources */,
-				C74422412E4936750002D277 /* DaemonView.swift in Sources */,
 				C72893052AFD42E600C8C1CD /* DeepLink.swift in Sources */,
-				C73545EB2D8496E000A3DC0C /* HelperToolManager.swift in Sources */,
-				C72FDCB92D6D089100DE7D56 /* UndoManager.swift in Sources */,
-				C7BB992F2E8B225F007BBB81 /* FileSearchView.swift in Sources */,
-				C75AED0E2EC259A900824CCD /* DeleteHistoryView.swift in Sources */,
 				C73AE1922EC69A81009CAC42 /* GlobalConsoleManager.swift in Sources */,
 				C77B90042AF18E2E009CC655 /* PearcleanerApp.swift in Sources */,
 				C77B90182AF19382009CC655 /* AppCommands.swift in Sources */,
@@ -995,7 +945,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Pearcleaner/Logic/PKG/Pearcleaner-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1052,7 +1002,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Pearcleaner/Logic/PKG/Pearcleaner-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Osize";
 				SWIFT_VERSION = 5.0;
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
