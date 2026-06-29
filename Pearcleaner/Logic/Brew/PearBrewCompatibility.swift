@@ -9,6 +9,7 @@
 
 import Foundation
 import SwiftUI
+import AlinFoundation
 
 final class FolderSettingsManager: ObservableObject {
     static let shared = FolderSettingsManager()
