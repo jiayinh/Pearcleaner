@@ -40,7 +40,7 @@ jobs:
       - name: Build (unsigned)
         run: |
           set +e
-          xcodebuild clean build \
+          xcodebuild -quiet clean build \
             -project Pearcleaner.xcodeproj \
             -scheme "Pearcleaner Release" \
             -configuration Release \
