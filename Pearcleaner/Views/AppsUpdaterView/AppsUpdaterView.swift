@@ -43,13 +43,13 @@ struct AppsUpdaterView: View {
     }
 
     // Collect all apps across all sources (exclude unsupported and current apps - they can't/don't need updates)
-    private var allApps: [UpdateableApp] {
+    private var updateableApps: [UpdateableApp] {
         updateManager.updatesBySource.values.flatMap { $0 }.filter { $0.source != .unsupported && $0.source != .current }
     }
 
     // Count selected apps across all sources
     private var selectedAppsCount: Int {
-        allApps.filter { $0.isSelectedForUpdate }.count
+        updateableApps.filter { $0.isSelectedForUpdate }.count
     }
 
 
@@ -65,20 +65,12 @@ struct AppsUpdaterView: View {
         if sources.sparkle.enabled {
             cats.append(("Sparkle", { $0.source == .sparkle }, true, updateManager.scanningSources.contains(.sparkle)))
         }
-        // Show Current category if enabled
-        if display.showCurrent {
-            cats.append(("Current", { $0.source == .current }, false, false))
-        }
-        // Show Unsupported if enabled
-        if display.showUnsupported {
-            cats.append(("Unsupported", { $0.source == .unsupported }, false, false))
-        }
         return cats
     }
 
     // All updateable apps for sidebar
     private var allUpdateableApps: [UpdateableApp] {
-        updateManager.updatesBySource.values.flatMap { $0 }
+        updateableApps
     }
 
     var body: some View {
@@ -88,10 +80,10 @@ struct AppsUpdaterView: View {
                     items: allUpdateableApps,
                     categories: sidebarCategories,
                     searchText: $searchText,
-                    emptyMessage: "No apps to update",
-                    noResultsMessage: "No matching apps",
+                    emptyMessage: "No available updates",
+                    noResultsMessage: "No matching updates",
                     isLoading: updateManager.isScanning,
-                    loadingMessage: "Loading.."
+                    loadingMessage: "Checking for updates..."
                 ) { app in
                     UpdateRowViewSidebar(
                         app: app,
@@ -114,9 +106,16 @@ struct AppsUpdaterView: View {
                     } else {
                         VStack {
                             Spacer()
-                            Text("Select an app to view details")
-                                .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-                                .font(.title2)
+                            VStack(spacing: 8) {
+                                Text(updateManager.isScanning ? "Checking for updates..." : "No update selected")
+                                    .font(.title2)
+                                    .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
+                                Text(updateableApps.isEmpty ? "PearBrew only shows apps with supported updates here. Use Refresh to scan again." : "Select an app from the sidebar to view details.")
+                                    .font(.callout)
+                                    .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding(.horizontal, 40)
                             Spacer()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -205,7 +204,7 @@ struct AppsUpdaterView: View {
                     }
                 }
                 .help(updateManager.isUpdatingAll ? "Updating apps..." : "Update all available apps")
-                .disabled(allUpdateableApps.isEmpty || !updateManager.scanningSources.isEmpty || updateManager.isUpdatingAll)
+                .disabled(updateableApps.isEmpty || !updateManager.scanningSources.isEmpty || updateManager.isUpdatingAll)
 
                 if updateManager.isScanning {
                     // Show stop button during scan
@@ -260,9 +259,9 @@ struct AppsUpdaterView: View {
     }
 
     private func selectAllApps() {
-        // Select all apps across all sources (skip unsupported - they can't be updated)
+        // Select only apps that PearBrew can update.
         for (source, apps) in updateManager.updatesBySource {
-            guard source != .unsupported || source != .current else { continue }
+            guard source != .unsupported && source != .current else { continue }
             var updatedApps = apps
             for index in updatedApps.indices {
                 updatedApps[index].isSelectedForUpdate = true
