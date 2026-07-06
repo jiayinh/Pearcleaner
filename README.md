@@ -52,6 +52,22 @@ show normal macOS Gatekeeper warnings. This fork intentionally avoids the
 privileged helper path so it can remain useful for personal builds without a paid
 Apple Developer account.
 
+
+## Opening Unsigned Builds
+
+GitHub Actions artifacts are unsigned and not notarized. On first launch, macOS
+may warn that the app is from an unidentified developer, damaged, or should be
+moved to Trash. For personal builds, move the app to /Applications, then run:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/PearBrew.app
+codesign --force --deep --sign - /Applications/PearBrew.app
+open /Applications/PearBrew.app
+```
+
+This uses ad-hoc signing and removes the download quarantine flag. It is not the
+same as Apple notarization, so only use it for builds you created or trust.
+
 ## Relationship to Pearcleaner
 
 PearBrew is based on Pearcleaner source code and retains Pearcleaner's license
