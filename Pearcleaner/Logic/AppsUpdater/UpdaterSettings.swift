@@ -58,6 +58,6 @@ struct UpdaterSourcesSettings: AppStorageCodable {
 
 // MARK: - Display Settings
 struct UpdaterDisplaySettings: AppStorageCodable {
-    var showUnsupported: Bool = true
-    var showCurrent: Bool = true
+    var showUnsupported: Bool = false
+    var showCurrent: Bool = false
 }
