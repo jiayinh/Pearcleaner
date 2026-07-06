@@ -21,6 +21,7 @@ struct AppsUpdaterView: View {
     @AppStorage("settings.interface.animationEnabled") private var animationEnabled: Bool = true
     @AppStorage("settings.updater.sources") private var sourcesData: Data = UpdaterSourcesSettings.defaultEncoded()
     @AppStorage("settings.updater.display") private var displayData: Data = UpdaterDisplaySettings.defaultEncoded()
+    @AppStorage("settings.updater.restoredAdoptCandidates") private var restoredAdoptCandidates: Bool = false
     @AppStorage("settings.interface.startupView") private var startupView: Int = CurrentPage.homebrew.rawValue
 
     // Computed properties for convenient access
@@ -42,12 +43,21 @@ struct AppsUpdaterView: View {
         }
     }
 
-    // Collect all apps across all sources (exclude unsupported and current apps - they can't/don't need updates)
+    // Collect apps that can actually be updated in batches. Adopt candidates are shown separately.
     private var updateableApps: [UpdateableApp] {
         updateManager.updatesBySource.values.flatMap { $0 }.filter { $0.source != .unsupported && $0.source != .current }
     }
 
-    // Count selected apps across all sources
+    private var adoptableApps: [UpdateableApp] {
+        guard display.showUnsupported else { return [] }
+        return updateManager.updatesBySource[.unsupported] ?? []
+    }
+
+    private var sidebarApps: [UpdateableApp] {
+        updateableApps + adoptableApps
+    }
+
+    // Count selected apps across sources that support direct updating.
     private var selectedAppsCount: Int {
         updateableApps.filter { $0.isSelectedForUpdate }.count
     }
@@ -65,12 +75,15 @@ struct AppsUpdaterView: View {
         if sources.sparkle.enabled {
             cats.append(("Sparkle", { $0.source == .sparkle }, true, updateManager.scanningSources.contains(.sparkle)))
         }
+        if display.showUnsupported {
+            cats.append(("Adopt Candidates", { $0.source == .unsupported }, false, false))
+        }
         return cats
     }
 
-    // All updateable apps for sidebar
+    // All apps shown in the updater sidebar.
     private var allUpdateableApps: [UpdateableApp] {
-        updateableApps
+        sidebarApps
     }
 
     var body: some View {
@@ -110,7 +123,7 @@ struct AppsUpdaterView: View {
                                 Text(updateManager.isScanning ? "Checking for updates..." : "No update selected")
                                     .font(.title2)
                                     .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-                                Text(updateableApps.isEmpty ? "PearBrew only shows apps with supported updates here. Use Refresh to scan again." : "Select an app from the sidebar to view details.")
+                                Text(updateableApps.isEmpty && !adoptableApps.isEmpty ? "Select an app under Adopt Candidates to match it with a Homebrew cask." : (allUpdateableApps.isEmpty ? "Use Refresh to scan for updates and adoptable apps." : "Select an update or an adopt candidate from the sidebar to view details."))
                                     .font(.callout)
                                     .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
                                     .multilineTextAlignment(.center)
@@ -150,6 +163,9 @@ struct AppsUpdaterView: View {
         .animation(animationEnabled ? .spring(response: 0.35, dampingFraction: 0.8) : .none, value: hiddenSidebar)
         .transition(.opacity)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            restoreAdoptCandidatesVisibilityIfNeeded()
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("UpdaterViewShouldRefresh"))) { _ in
             Task {
                 let task = Task { await updateManager.scanIfNeeded(forceReload: true) }
@@ -281,6 +297,14 @@ struct AppsUpdaterView: View {
 //            updateManager.updatesBySource[source] = updatedApps
 //        }
 //    }
+
+    private func restoreAdoptCandidatesVisibilityIfNeeded() {
+        guard !restoredAdoptCandidates else { return }
+        var currentDisplay = display
+        currentDisplay.showUnsupported = true
+        displayData = currentDisplay.encode()
+        restoredAdoptCandidates = true
+    }
 
     private func updateSelectedApps() {
         GlobalConsoleManager.shared.appendOutput("Starting update of \(selectedAppsCount) selected app(s)...\n", source: CurrentPage.updater.title)
