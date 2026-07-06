@@ -593,27 +593,12 @@ struct TahoeToolbarItem<Content: View>: ToolbarContent {
 
     var body: some ToolbarContent {
         if isGroup {
-            if #available(macOS 26.0, *) {
-                ToolbarItemGroup(placement: placement) { content() }
-                    .sharedBackgroundVisibility(.hidden)
-            } else {
-                ToolbarItemGroup(placement: placement) { content() }
-            }
+            ToolbarItemGroup(placement: placement) { content() }
         } else {
-            if #available(macOS 26.0, *) {
-                if let id {
-                    ToolbarItem(id: id, placement: placement) { content() }
-                        .sharedBackgroundVisibility(.hidden)
-                } else {
-                    ToolbarItem(placement: placement) { content() }
-                        .sharedBackgroundVisibility(.hidden)
-                }
+            if let id {
+                ToolbarItem(id: id, placement: placement) { content() }
             } else {
-                if let id {
-                    ToolbarItem(id: id, placement: placement) { content() }
-                } else {
-                    ToolbarItem(placement: placement) { content() }
-                }
+                ToolbarItem(placement: placement) { content() }
             }
         }
     }
@@ -624,13 +609,7 @@ struct ifGlassAvailable: ViewModifier {
     @AppStorage("settings.general.glassEffect") private var glassEffect: String = "Regular"
 
     func body(content: Content) -> some View {
-        if #available(macOS 26.0, *) {
-            content
-                .glassEffect(glassEffect == "Regular" ? .regular : .clear, in: .rect(cornerRadius: 20))
-        }
-        else {
-            content
-        }
+        content
     }
 }
 
@@ -647,25 +626,13 @@ struct ifGlassAvailableMain: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
 
     func body(content: Content) -> some View {
-        if #available(macOS 26.0, *) {
-            if glassEffect == "Regular" {
-                content
-                    .glassEffect(.regular, in: .rect(cornerRadius: 20))
-            } else {
-                content
-                    .background(GlassEffect(material: .sidebar, blendingMode: .behindWindow))
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+        content
+            .background(backgroundView(color: ThemeColors.shared(for: colorScheme).secondaryBG, glass: glass))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(ThemeColors.shared(for: colorScheme).primaryText.opacity(0.2), lineWidth: 1)
             }
-        }
-        else {
-            content
-                .background(backgroundView(color: ThemeColors.shared(for: colorScheme).secondaryBG, glass: glass))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(ThemeColors.shared(for: colorScheme).primaryText.opacity(0.2), lineWidth: 1)
-                }
-        }
     }
 }
 
@@ -681,34 +648,13 @@ struct ifGlassAvailableSidebar: ViewModifier {
     @AppStorage("settings.general.glassEffect") private var glassEffect: String = "Regular"
 
     func body(content: Content) -> some View {
-        if #available(macOS 26.0, *) {
-            if glassEffect == "Regular" {
-                content
-                    .glassEffect(.regular, in: .rect(cornerRadius: 20))
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(ThemeColors.shared(for: colorScheme).primaryText.opacity(0.2), lineWidth: colorScheme == .light ? 1 : 0)
-                    }
-            } else {
-                content
-                    .background(GlassEffect(material: .sidebar, blendingMode: .behindWindow))
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(ThemeColors.shared(for: colorScheme).primaryText.opacity(0.2), lineWidth: colorScheme == .light ? 1 : 0)
-                    }
+        content
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(ThemeColors.shared(for: colorScheme).primaryText.opacity(0.2), lineWidth: 1)
             }
-        }
-        else {
-            content
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(ThemeColors.shared(for: colorScheme).primaryText.opacity(0.2), lineWidth: 1)
-                }
-        }
     }
 }
 
