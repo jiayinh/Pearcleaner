@@ -7,23 +7,23 @@ on:
 
 jobs:
   build:
-    runs-on: macos-26-arm64
+    runs-on: macos-15-arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode 26 (pinned to a stable version)
+      - name: Select Xcode 16
         run: |
           echo "Available Xcode versions:"
           ls /Applications | grep -i Xcode || true
-          # Prefer a known-good Xcode 26.0, fall back to lowest 26.x, then any 26.x
-          if [ -d /Applications/Xcode_26.0.app ]; then
-            XCODE_APP=/Applications/Xcode_26.0.app
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            XCODE_APP=/Applications/Xcode_16.4.app
           else
-            XCODE_APP=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | head -n 1)
+            XCODE_APP=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -n 1)
           fi
           if [ -z "$XCODE_APP" ]; then
-            XCODE_APP=/Applications/Xcode.app
+            echo "Xcode 16 is not available on this runner."
+            exit 1
           fi
           echo "Selecting $XCODE_APP"
           sudo xcode-select -switch "$XCODE_APP/Contents/Developer"
