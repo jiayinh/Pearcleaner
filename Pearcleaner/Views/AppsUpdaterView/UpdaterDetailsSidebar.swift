@@ -235,47 +235,10 @@ struct UpdaterSourceCheckboxSection: View {
 
             }
 
-            // Current apps toggle
-            Toggle(isOn: Binding(
-                get: { display.showCurrent },
-                set: { newValue in
-                    display.showCurrent = newValue
-                }
-            )) {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle")
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-                        .font(.caption)
-                        .frame(width: 16)
-
-                    Text("Current")
-                        .font(.caption)
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-                }
-            }
-            .toggleStyle(CircleCheckboxToggleStyle())
-            .help("Show apps that are already up-to-date")
-
-            // Unsupported apps toggle
-            Toggle(isOn: Binding(
-                get: { display.showUnsupported },
-                set: { newValue in
-                    display.showUnsupported = newValue
-                }
-            )) {
-                HStack(spacing: 8) {
-                    Image(systemName: "questionmark.circle")
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-                        .font(.caption)
-                        .frame(width: 16)
-
-                    Text("Unsupported")
-                        .font(.caption)
-                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
-                }
-            }
-            .toggleStyle(CircleCheckboxToggleStyle())
-            .help("Show apps without a supported update mechanism")
+            Text("PearBrew lists supported update sources only; current and unsupported apps are hidden from the updater view.")
+                .font(.caption)
+                .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
 
 
         }
