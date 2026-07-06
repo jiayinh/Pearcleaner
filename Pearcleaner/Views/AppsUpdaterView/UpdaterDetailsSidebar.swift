@@ -235,7 +235,27 @@ struct UpdaterSourceCheckboxSection: View {
 
             }
 
-            Text("PearBrew lists supported update sources only; current and unsupported apps are hidden from the updater view.")
+            Toggle(isOn: Binding(
+                get: { display.showUnsupported },
+                set: { newValue in
+                    display.showUnsupported = newValue
+                }
+            )) {
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass.circle")
+                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
+                        .font(.caption)
+                        .frame(width: 16)
+
+                    Text("Adopt Candidates")
+                        .font(.caption)
+                        .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
+                }
+            }
+            .toggleStyle(CircleCheckboxToggleStyle())
+            .help("Show non-Homebrew apps that can be matched and adopted into Homebrew")
+
+            Text("Current apps stay hidden; adopt candidates are shown so you can match them with Homebrew casks.")
                 .font(.caption)
                 .foregroundStyle(ThemeColors.shared(for: colorScheme).secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
