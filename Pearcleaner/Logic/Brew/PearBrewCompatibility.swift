@@ -128,9 +128,7 @@ func flushBundleCache(for url: URL) {}
 func flushBundleCaches(for apps: [AppInfo]) {}
 
 struct Pearcleaner {
-    static func flushBundleCaches(for apps: [AppInfo]) {
-        Swift.flushBundleCaches(for: apps)
-    }
+    static func flushBundleCaches(for apps: [AppInfo]) {}
 }
 
 enum AppInfoUtils {
